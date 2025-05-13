@@ -37,6 +37,10 @@
   justify-content: flex-end;
 }
 
+.right {
+  justify-content: flex-start;
+}
+
 .main-wrapper {
   display: grid;
   grid-template-areas: "left-box center-box right-box";
@@ -53,9 +57,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   min-width: 200px;
   border: 1px solid white;
+}
+
+.right-box p {
+  margin-top: 20px;
+  width: 100%;
+  text-align: center;
+}
+
+.right-box:hover p {
+  cursor: pointer;
 }
 
 .center-box {
@@ -84,11 +97,18 @@
 }
 
 .content {
+  overflow: auto;
+  height: 100%;
+  width: 100%;
+}
+
+.empty {
   margin: 0 2rem 0 2rem;
   padding-top: 0.5rem;
   padding-bottom: 1rem;
   overflow: auto;
 }
+
 
 @media (max-width: 1000px) {
   .main-wrapper {

@@ -1,5 +1,5 @@
 import './css/App.css'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Outlet } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import { jwtDecode } from 'jwt-decode';
 import type { JwtPayload } from 'jwt-decode';
@@ -8,10 +8,13 @@ const Home = () => {
   const { token, logout } = useAuth();
 
   let role = null;
+  let username = null;
+
   if (token) {
     try {
       const decoded: any = jwtDecode(token);
       role = decoded.role;
+      username = decoded.username;
       console.log('Role:', role);
     } catch (e) {
       console.error('Failed to decode token');
@@ -24,7 +27,13 @@ const Home = () => {
     <>
       <div className="page-wrapper">
         <div className="header">
-          <div className="header-section">
+          <div className="header-section right">
+            {role ? (
+              <p className="role">{`Logged in as: ${username}`}</p>
+            ) : (
+              <>
+              </>
+            )}
           </div>
           <div className="header-section center">
             <p className="title">- Void - </p>
@@ -40,17 +49,27 @@ const Home = () => {
         <div className="main-wrapper">
           <div className="left-box"></div>
           <div className="center-box drop-shadow">
-            <div className="content">
               {token ? (
-                <div>
-                  <p>Logged in</p>
+                <div className="content">
+                  <Outlet />
                 </div>
               ) : (
+                <div className="empty">
                   <p>|-|-|-|</p>
+                </div>
               )}
-            </div>
           </div>
-          <div className="right-box"></div>
+          <div className="right-box">
+            {token ? (
+              <>
+                <p onClick={() => navigate('/feed')}>home</p>
+                <p onClick={() => navigate('/streams')}>streams</p>
+              </>
+            ) : (
+              <>
+              </>
+            )}
+          </div>
         </div>
         <div className="footer">
           © {new Date().getFullYear()} - sibe
