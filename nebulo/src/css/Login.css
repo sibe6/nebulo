@@ -96,6 +96,15 @@
   overflow: hidden;
 }
 
+.login-form p {
+  position: absolute;
+  right: 0px;
+  top: -25px;
+  font-size: 0.9em;
+  color: #646464;
+  cursor: pointer;
+}
+
 .login-form.visible {
   opacity: 1;
 }

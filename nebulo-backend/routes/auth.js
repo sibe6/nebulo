@@ -2,15 +2,15 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
+const PendingUser = require('../models/PendingUser');
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
   const { username, password } = req.body;
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ username, password: hashedPassword });
+    const user = new PendingUser({ username, password: password });
     await user.save();
-    res.status(201).send("User created");
+    res.status(201).send("User created, await for approval");
   } catch (err) {
     res.status(400).send("Error: " + err.message);
   }

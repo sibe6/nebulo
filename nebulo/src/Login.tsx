@@ -73,6 +73,7 @@ const Login = () => {
 
           <form onSubmit={handleLogin}> 
           <div className={`login-form ${isOpen ? 'visible' : ''}`}>
+              <p onClick={() => navigate('/register')}>Create user</p>
               {error && <p style={{ color: 'red' }}>{error}</p>}
               <input onChange={(e) => setUsername(e.target.value)} type="text" placeholder="Username" />
               <input onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Password" />
