@@ -3,6 +3,7 @@ import { useNavigate, Outlet } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import { jwtDecode } from 'jwt-decode';
 import type { JwtPayload } from 'jwt-decode';
+import Profile from './Profile';
 
 const Home = () => {
   const { token, logout } = useAuth();
@@ -47,7 +48,13 @@ const Home = () => {
           </div>
         </div>
         <div className="main-wrapper">
-          <div className="left-box"></div>
+          <div className="left-box">
+            {token ? (
+              <Profile />
+            ) : (
+              <></>
+            )}
+          </div>
           <div className="center-box drop-shadow">
               {token ? (
                 <div className="content">

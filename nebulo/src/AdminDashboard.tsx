@@ -12,6 +12,7 @@ interface User {
   username: string;
   role: string;
   createdAt: string;
+  lastLogin: string;
 }
 
 const AdminDashboard = () => {
@@ -132,7 +133,8 @@ const AdminDashboard = () => {
               {allUsers.map((user) => (
                 <li key={user._id}>
                   <p>
-                    {user.username} (Role: {user.role}, Created At: {new Date(user.createdAt).toLocaleString()})
+                    {user.username} (Role: {user.role}, 
+                    Created At: {new Date(user.createdAt).toLocaleString()}) {user.lastLogin}
                   </p>
                 </li>
               ))}

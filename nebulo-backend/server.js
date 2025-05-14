@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const authRoutes = require('./routes/auth');
 const postRoutes = require('./routes/posts');
 const adminRoutes = require('./routes/admin');
+const profileRoutes = require('./routes/profile');
 const { authMiddleware, requireRole } = require('./middleware/authMiddleware');
 
 const app = express();
@@ -26,6 +27,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/feed', postRoutes);
 
 app.use('/api/admin', adminRoutes);
+
+app.use('/api/profile', profileRoutes);
 
 app.get('/api/protected', authMiddleware, (req, res) => {
   res.send("Protected route access granted");

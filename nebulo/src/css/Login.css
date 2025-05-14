@@ -108,3 +108,14 @@
 .login-form.visible {
   opacity: 1;
 }
+
+.success-message {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+  font-size: 1.2em;
+  color: rgb(0, 105, 97);
+}
