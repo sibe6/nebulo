@@ -109,7 +109,6 @@
   overflow: auto;
 }
 
-
 @media (max-width: 1000px) {
   .main-wrapper {
     display: flex;
