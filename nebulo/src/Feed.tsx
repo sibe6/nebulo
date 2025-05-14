@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { useAuth } from './AuthContext';
 import { useAuthFetch } from './useAuthFetch';
+import { formatDate } from './Helpers';
 
 interface Post {
   _id: number;
@@ -141,7 +142,7 @@ const Feed = () => {
           </div>
         )}
         <div className='post-meta'>
-            <p className='post-date'>{post.createdAt}</p>
+            <p className='post-date'>{formatDate(post.createdAt)}</p>
             <p className='post-username'>- {post.username}</p>
         </div>
       </div>

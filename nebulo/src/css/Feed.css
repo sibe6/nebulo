@@ -93,6 +93,7 @@
   overflow-wrap: break-word;
   max-height: 250px;
   overflow-y: auto;
+  font-family: "Lucida Console", monospace;
 }
 
 .padding-top {
