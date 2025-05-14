@@ -8,8 +8,8 @@ const { authMiddleware, requireRole } = require('../middleware/authMiddleware');
 router.post('/newPost', authMiddleware, requireRole(['user', 'admin']), async (req, res) => {
   const { content } = req.body;
 
-  if (!content || content.length > 400) {
-    return res.status(400).json({ error: 'Nice try :)' });
+  if (!content || content.length > 400 || !/\S/.test(content)) {
+    return res.status(400).json({ error: 'Invalid post content. Ensure it is not empty and does not exceed 400 characters.' });
   }
 
   try {
@@ -23,6 +23,7 @@ router.post('/newPost', authMiddleware, requireRole(['user', 'admin']), async (r
     await post.save();
     res.status(201).json(post);
   } catch (err) {
+    console.error('Failed to create post:', err);
     res.status(500).json({ error: 'Failed to create post' });
   }
 });

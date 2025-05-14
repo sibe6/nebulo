@@ -44,12 +44,17 @@ const Feed = () => {
   }, []);
 
   const handleNewPost = () => {
-    if (newPost.length > 400) {
+    const postLength = newPost.length;
+    const newlineCount = (newPost.match(/\n/g) || []).length;
+
+    if (postLength > 400) {
       alert("Post is too long");
-    } else if (newPost.length > 0) {
+    } else if (newlineCount > 10) {
+      alert("Too many new lines (max 10)");
+    } else if (postLength > 0 && /\S/.test(newPost)) {
       publishPost();
     } else {
-      alert("Post cannot be empty");
+      alert("Post cannot be empty or contain only newlines");
     }
   };
 
@@ -127,7 +132,7 @@ const Feed = () => {
   const Post: React.FC<PostProps> = ({ post }) => {
     return (
       <div className="post">
-        {role === "admin" ? (
+        {role === "admin" || username == post.username? ( // Checked against id on server side
           <>
             <div className="post-header">
               <p onClick={() => deletePost(post._id)}>Delete</p>
@@ -161,13 +166,19 @@ const Feed = () => {
         </div>
         <div>
           <div className="new-post">
-            <textarea
-              value={newPost}
-              onChange={(e) => setNewPost(e.target.value)}
-              placeholder="Write your post..."
-            ></textarea>
-            <button onClick={() => handleNewPost()}>
-              {loading ? <span className="loading-dots"><span>.</span><span>.</span><span>.</span></span> : 'Post'}
+            <div className="textarea-wrapper">
+              <textarea
+                maxLength={400}
+                value={newPost}
+                onChange={(e) => setNewPost(e.target.value)}
+                placeholder="Write your post..."
+              ></textarea>
+              <span className="char-count">{newPost.length}/400</span>
+            </div>
+            <button onClick={handleNewPost}>
+              {loading ? (
+                <span className="loading-dots"><span>.</span><span>.</span><span>.</span></span>
+              ) : 'Post'}
             </button>
           </div>
         </div>

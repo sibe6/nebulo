@@ -93,6 +93,7 @@
   overflow-wrap: break-word;
   max-height: 250px;
   overflow-y: auto;
+  font-size: 1em;
   font-family: "Lucida Console", monospace;
 }
 
@@ -119,4 +120,30 @@
   text-align: right;
   font-size: 0.9em;
   color: #aaa;
+}
+
+@media (max-width: 1000px) {
+  .post {
+    margin: 0px 20px 0px 20px;
+  }
+}
+
+.textarea-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.textarea-wrapper textarea {
+  width: 100%;
+  height: 100%;
+}
+
+.char-count {
+  position: absolute;
+  bottom: 6px;
+  right: 8px;
+  font-size: 0.75em;
+  color: #aaa;
+  pointer-events: none;
 }

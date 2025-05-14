@@ -36,7 +36,7 @@ const Home = () => {
             )}
           </div>
           <div className="header-section center">
-            <p className="title">- Void - </p>
+            <p className="title">- Nebulo - </p>
           </div>
           <div className="header-section left">
             {token ? (
