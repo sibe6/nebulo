@@ -1,9 +1,10 @@
 import { useAuth } from './AuthContext';
+import { useCallback } from 'react';
 
 export const useAuthFetch = () => {
   const { token, logout } = useAuth();
 
-  const authFetch = async (url: string, options: RequestInit = {}) => {
+  const authFetch = useCallback(async (url: string, options: RequestInit = {}) => {
     const headers = {
       ...options.headers,
       Authorization: `Bearer ${token}`,
@@ -26,7 +27,7 @@ export const useAuthFetch = () => {
     }
 
     return response;
-  };
+  }, [token, logout]);
 
   return authFetch;
 };

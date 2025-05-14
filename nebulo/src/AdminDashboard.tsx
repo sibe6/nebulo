@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useAuthFetch } from './useAuthFetch';
 
 interface PendingUser {
@@ -20,42 +20,42 @@ const AdminDashboard = () => {
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [activeTab, setActiveTab] = useState<'pending' | 'all'>('pending');
 
+  const fetchPendingUsers = useCallback(async () => {
+    try {
+      const res = await authFetch('/api/admin/pendingUsers');
+      if (res.ok) {
+        const data = await res.json();
+        setPendingUsers(data);
+      } else {
+        console.error('Failed to fetch pending users:', await res.text());
+      }
+    } catch (err) {
+      console.error('Error fetching pending users:', err);
+    }
+  }, [authFetch]);
+
+  const fetchAllUsers = useCallback(async () => {
+    try {
+      const res = await authFetch('/api/admin/allUsers');
+      if (res.ok) {
+        const data = await res.json();
+        setAllUsers(data);
+      } else {
+        console.error('Failed to fetch all users:', await res.text());
+      }
+    } catch (err) {
+      console.error('Error fetching all users:', err);
+    }
+  }, [authFetch]);
+
   useEffect(() => {
-    const fetchPendingUsers = async () => {
-      try {
-        const res = await authFetch('/api/admin/pendingUsers');
-        if (res.ok) {
-          const data = await res.json();
-          setPendingUsers(data);
-        } else {
-          console.error('Failed to fetch pending users:', await res.text());
-        }
-      } catch (err) {
-        console.error('Error fetching pending users:', err);
-      }
-    };
-
-    const fetchAllUsers = async () => {
-      try {
-        const res = await authFetch('/api/admin/allUsers');
-        if (res.ok) {
-          const data = await res.json();
-          setAllUsers(data);
-        } else {
-          console.error('Failed to fetch all users:', await res.text());
-        }
-      } catch (err) {
-        console.error('Error fetching all users:', err);
-      }
-    };
-
     fetchPendingUsers();
     fetchAllUsers();
-  }, [authFetch]);
+  }, [fetchPendingUsers, fetchAllUsers]);
 
   const approveUser = async (userId: string) => {
     try {
-      const res = await authFetch(`/api/auth/approveUser/${userId}`, {
+      const res = await authFetch(`/api/admin/approveUser/${userId}`, {
         method: 'POST',
       });
       if (res.ok) {
@@ -65,6 +65,21 @@ const AdminDashboard = () => {
       }
     } catch (err) {
       console.error('Error approving user:', err);
+    }
+  };
+
+  const disapproveUser = async (userId: string) => {
+    try {
+      const res = await authFetch(`/api/admin/disapproveUser/${userId}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        setPendingUsers((prev) => prev.filter((user) => user._id !== userId));
+      } else {
+        console.error('Failed to disapprove user:', await res.text());
+      }
+    } catch (err) {
+      console.error('Error disapproving user:', err);
     }
   };
 
@@ -99,6 +114,7 @@ const AdminDashboard = () => {
                     {user.username} (Created At: {new Date(user.createdAt).toLocaleString()})
                   </p>
                   <button onClick={() => approveUser(user._id)}>Approve</button>
+                  <button onClick={() => disapproveUser(user._id)}>Disapprove</button>
                 </li>
               ))}
             </ul>

@@ -42,6 +42,23 @@ router.post('/approveUser/:id', authMiddleware, requireRole(['admin']), async (r
   }
 });
 
+router.delete('/disapproveUser/:id', authMiddleware, requireRole(['admin']), async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const pendingUser = await PendingUser.findById(id);
+    if (!pendingUser) {
+      return res.status(404).json({ error: 'Pending user not found' });
+    }
+
+    await PendingUser.findByIdAndDelete(id);
+    res.status(200).json({ message: 'User disapproved successfully' });
+  } catch (err) {
+    console.error('Failed to disapprove user:', err);
+    res.status(500).json({ error: 'Failed to disapprove user' });
+  }
+});
+
 router.get('/allUsers', authMiddleware, requireRole(['admin']), async (req, res) => {
   try {
     const users = await User.find({});

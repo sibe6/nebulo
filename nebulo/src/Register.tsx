@@ -41,7 +41,12 @@ const Register = () => {
           <form onSubmit={handleRegister}> 
           <div className={`login-form ${isOpen ? 'visible' : ''}`}>
               {error && <p style={{ color: 'red' }}>{error}</p>}
-              <input onChange={(e) => setUsername(e.target.value)} type="text" placeholder="Username" />
+              <input
+                onChange={(e) => setUsername(e.target.value.toLowerCase())}
+                value={username}
+                type="text"
+                placeholder="Username"
+              />
               <input onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Password" />
               <input onChange={(e) => setPasswordAgain(e.target.value)} type="password" placeholder="Password again" />
               <button type="submit" disabled={loading}>

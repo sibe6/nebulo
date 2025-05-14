@@ -6,13 +6,28 @@ const PendingUser = require('../models/PendingUser');
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
-  const { username, password } = req.body;
+  let { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Username and password are required' });
+  }
+
+  username = username.toLowerCase();
   try {
-    const user = new PendingUser({ username, password: password });
+    const existingPendingUser = await PendingUser.findOne({ username });
+    const existingUser = await User.findOne({ username });
+
+    if (existingPendingUser || existingUser) {
+      return res.status(400).json({ error: 'Username is already in use' });
+    }
+
+    const user = new PendingUser({ username, password });
     await user.save();
+
     res.status(201).send("User created, await for approval");
   } catch (err) {
-    res.status(400).send("Error: " + err.message);
+    console.error('Error during registration:', err);
+    res.status(500).send("Error: " + err.message);
   }
 });
 
