@@ -1,0 +1,18 @@
+.stream-controls {
+  margin-bottom: 10px;
+}
+
+.stream-controls button {
+  margin-right: 10px;
+  padding: 8px 16px;
+  font-size: 1em;
+  cursor: pointer;
+  background-color: #000;
+  color: #fff;
+  border: 1px solid #fff;
+  border-radius: 4px;
+}
+
+.stream-controls button:hover {
+  background-color: #333;
+}

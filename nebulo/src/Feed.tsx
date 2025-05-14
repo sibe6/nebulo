@@ -1,100 +1,95 @@
 
 import './css/Feed.css';
-import { useState } from 'react';
+import './css/Animations.css';
+import { useState, useEffect } from 'react';
+import { jwtDecode } from 'jwt-decode';
+import { useAuth } from './AuthContext';
+import { useAuthFetch } from './useAuthFetch';
+
+interface Post {
+  _id: number;
+  username: string;
+  content: string;
+  createdAt: string;
+}
 
 const Feed = () => {
+  const { token } = useAuth();
+  const authFetch = useAuthFetch();
   const [newPost, setNewPost] = useState("")
+  const [loading, setLoading] = useState(false);
+  const [posts, setPosts] = useState<Post[]>([]);
 
-  const posts = [
-      {
-        id: 1,
-        username: "user1",
-        content: "This is the first post very long content that should be truncated as it is too long to fit in the box",
-      },
-      {
-        id: 2,
-        username: "sibe",
-        content: "This is the first post very long content that should be truncated as it is too long to fit in the box",
-      },
-      {
-        id: 3,
-        username: "sibe",
-        content: "This is the second post",
-      },
-      {
-        id: 4,
-        username: "sibe",
-        content: "This is the second post",
-      },
-      {
-        id: 5,
-        username: "sibe",
-        content: "This is the second post",
-      },
-      {
-        id: 6,
-        username: "sibe",
-        content: "This is the second post",
-      },
-      {
-        id: 7,
-        username: "sibe",
-        content: "This is the second post",
-      },
-      {
-        id: 8,
-        username: "sibe",
-        content: "This is the second post",
-      },
-      {
-        id: 9,
-        username: "sibe",
-        content: "This is the second post",
-      },
-      {
-        id: 10,
-        username: "sibe",
-        content: "This is the second post",
-      },
-      {
-        id: 11,
-        username: "sibe",
-        content: "This is thesecond post",
-      },
-      {
-        id: 12,
-        username: "sibe",
-        content: "This is the second post",
-      },
-      {
-        id: 13,
-        username: "sibe",
-        content: "This is the second post",
-      },
-      {
-        id: 14,
-        username: "sibe",
-        content: "This is thesecond post",
-      },
-      {
-        id: 15,
-        username: "sibe",
-        content: "This is the second post",
-      },
-      {
-        id: 16,
-        username: "sibe",
-        content: "This is the second post",
-      },
-    ]
+  useEffect(() => {
+    fetchPosts();
+    const interval = setInterval(() => {
+      fetchPosts();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
-  type PostProps = {
-    post: {
-      id: number;
-      username: string;
-      content: string;
-    };
+  const handleNewPost = () => {
+    if (newPost.length > 400) {
+      alert("Post is too long");
+    } else if (newPost.length > 0) {
+      publishPost();
+    } else {
+      alert("Post cannot be empty");
+    }
   };
+
+  const fetchPosts = async () => {
+    let url = '/api/feed/posts';
+
+    if (posts.length > 0) {
+      url += `?after=${posts[0]._id}`;
+    }
+
+    const res = await authFetch(url);
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data.length > 0) {
+        setPosts((prevPosts) => {
+          const newPosts: Post[] = data.filter((post: Post) => !prevPosts.some((p: Post) => p._id === post._id));
+          return [...newPosts, ...prevPosts];
+        });
+      }
+    } else {
+      console.error("Failed to fetch posts:", await res.text());
+    }
+  };
+
+  const publishPost = async () => {
+    setLoading(true);
+    try {
+      const res = await authFetch('/api/feed/newPost', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          content: newPost,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setNewPost("");
+        setPosts((prevPosts) => [data, ...prevPosts]);
+      } else {
+        alert(`Failed to post: ${await res.text()}`);
+      }
+    } catch (e) {
+      console.error('Failed to post content:', e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  interface PostProps {
+    post: Post;
+  }
 
   const Post: React.FC<PostProps> = ({ post }) => {
     return (
@@ -103,7 +98,7 @@ const Feed = () => {
             {post.content}
         </div>
         <div className='post-meta'>
-            <p className='post-date'>2023-10-01</p>
+            <p className='post-date'>{post.createdAt}</p>
             <p className='post-username'>- {post.username}</p>
         </div>
       </div>
@@ -113,20 +108,28 @@ const Feed = () => {
   return (
     <>
       <div className="feed-wrapper">
-        <div className="posts">
-          {posts.map((post) => (
-            <Post key={post.id} post={post} />
-          ))}
+        <div className='posts-wrapper'>
+          <div className="posts">
+            {posts.map((post) => (
+              <Post key={post._id} post={post} />
+            ))}
+          </div>
         </div>
         <div>
           <div className="new-post">
-            <textarea placeholder="Write your post..."></textarea>
-            <button>Post</button>
+            <textarea
+              value={newPost}
+              onChange={(e) => setNewPost(e.target.value)}
+              placeholder="Write your post..."
+            ></textarea>
+            <button onClick={() => handleNewPost()}>
+              {loading ? <span className="loading-dots"><span>.</span><span>.</span><span>.</span></span> : 'Post'}
+            </button>
           </div>
         </div>
       </div>
     </>
-  )}
-
+  )
+}
 
 export default Feed;

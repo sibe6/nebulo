@@ -1,9 +1,7 @@
-//const path = require('path');
-//require('dotenv').config({ path: path.resolve(__dirname, '.env') });
-
 const express = require('express');
 const mongoose = require('mongoose');
 const authRoutes = require('./routes/auth');
+const postRoutes = require('./routes/posts');
 const { authMiddleware, requireRole } = require('./middleware/authMiddleware');
 
 const app = express();
@@ -24,15 +22,17 @@ mongoose.connect(mongoUri)
 
 app.use('/api/auth', authRoutes);
 
+app.use('/api/feed', postRoutes);
+
 app.get('/api/protected', authMiddleware, (req, res) => {
   res.send("Protected route access granted");
 });
 
-app.get('/admin', authMiddleware, requireRole('admin'), (req, res) => {
+app.get('/admin', authMiddleware, requireRole(['admin']), (req, res) => {
   res.send("Admin route access granted");
 });
 
-app.get('/api/verified', authMiddleware, requireRole('admin'), (req, res) => {
+app.get('/api/verified', authMiddleware, requireRole(['admin']), (req, res) => {
   res.send("Verified route access granted");
 });
 

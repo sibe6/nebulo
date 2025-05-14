@@ -1,4 +1,5 @@
 import './css/Login.css';
+import './css/Animations.css';
 import { useState } from 'react';
 import { useAuth } from './AuthContext';
 import { useNavigate } from 'react-router-dom';

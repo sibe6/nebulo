@@ -40,7 +40,7 @@ const Home = () => {
           </div>
           <div className="header-section left">
             {token ? (
-              <p className="login" onClick={() => logout()}>{">Logout"}</p>
+              <p className="login" onClick={() => logout()}>{">Log Out"}</p>
             ):(
               <p className="login" onClick={() => navigate('/login')}>{">Login"}</p>
             )}
@@ -62,7 +62,7 @@ const Home = () => {
           <div className="right-box">
             {token ? (
               <>
-                <p onClick={() => navigate('/feed')}>home</p>
+                <p onClick={() => navigate('/')}>home</p>
                 <p onClick={() => navigate('/streams')}>streams</p>
               </>
             ) : (

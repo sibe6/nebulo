@@ -7,9 +7,12 @@
   --max-width: 600px;
 }
 
-.posts {
+.posts-wrapper {
   flex-grow: 1;
   overflow: auto;
+}
+
+.posts {
   margin: 0 auto;
   max-width: var(--max-width);
   width: 100%;
@@ -24,8 +27,8 @@
   height: 100px;
   padding: 12px;
   margin: 0 auto;
-  max-width: var(--max-width);
   width: 100%;
+  max-width: var(--max-width);
   box-sizing: border-box;
 }
 
@@ -53,6 +56,7 @@
   font-family: monospace;
   margin-left: 10px;
   border-radius: 0px;
+  width: 80px;
 }
 
 .post {
@@ -61,7 +65,7 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  overflow-y: scroll;
+  max-width: var(--max-width);
 }
 
 .post-content {
@@ -70,6 +74,11 @@
   width: 100%;
   box-sizing: border-box;
   text-align: left;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-height: 250px;
+  overflow-y: auto;
 }
 
 .post-meta {

@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import './css/Streams.css';
 
 declare global {
   interface Window {
@@ -7,6 +8,8 @@ declare global {
 }
 
 const Streams = () => {
+  const [channel, setChannel] = useState('forsen');
+
   useEffect(() => {
     const initializeTwitchEmbed = () => {
       const embedContainer = document.getElementById('twitch-embed');
@@ -15,14 +18,12 @@ const Streams = () => {
         return;
       }
 
-      if (embedContainer.childNodes.length > 0) {
-        return;
-      }
+      embedContainer.innerHTML = '';
 
       new window.Twitch.Embed('twitch-embed', {
         width: 854,
         height: 480,
-        channel: 'forsen',
+        channel: channel,
         layout: 'video',
       });
     };
@@ -36,10 +37,14 @@ const Streams = () => {
     } else {
       initializeTwitchEmbed();
     }
-  }, []);
+  }, [channel]);
 
   return (
     <div className="streams">
+      <div className="stream-controls">
+        <button onClick={() => setChannel('forsen')}>Forsen</button>
+        <button onClick={() => setChannel('xqc')}>xQc</button>
+      </div>
       <div id="twitch-embed"></div>
     </div>
   );
