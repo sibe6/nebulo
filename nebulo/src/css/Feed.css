@@ -68,6 +68,10 @@
   max-width: var(--max-width);
 }
 
+.post:hover {
+  background-color: #080808;
+}
+
 .post-header {
   display: flex;
   width: 100%;
@@ -79,7 +83,7 @@
   font-size: 0.8em;
 }
 
-.post-header:hover {
+.post-header:hover p {
   cursor: pointer;
 }
 
