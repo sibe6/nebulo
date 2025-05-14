@@ -20,6 +20,20 @@ const Feed = () => {
   const [loading, setLoading] = useState(false);
   const [posts, setPosts] = useState<Post[]>([]);
 
+  let role = null;
+  let username = null;
+
+  if (token) {
+    try {
+      const decoded: any = jwtDecode(token);
+      role = decoded.role;
+      username = decoded.username;
+      console.log('Role:', role);
+    } catch (e) {
+      console.error('Failed to decode token');
+    }
+  }
+
   useEffect(() => {
     fetchPosts();
     const interval = setInterval(() => {
@@ -87,6 +101,24 @@ const Feed = () => {
     }
   };
 
+  const deletePost = async (postId: number) => {
+    setLoading(true);
+    try {
+      const res = await authFetch(`/api/feed/deletePost/${postId}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
+      } else {
+        alert(`Failed to delete post: ${await res.text()}`);
+      }
+    } catch (e) {
+      console.error('Failed to delete post:', e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   interface PostProps {
     post: Post;
   }
@@ -94,9 +126,20 @@ const Feed = () => {
   const Post: React.FC<PostProps> = ({ post }) => {
     return (
       <div className="post">
-        <div className='post-content'>
-            {post.content}
-        </div>
+        {role === "admin" ? (
+          <>
+            <div className="post-header">
+              <p onClick={() => deletePost(post._id)}>Delete</p>
+            </div>
+            <div className='post-content'>
+                {post.content}
+            </div>
+          </>
+        ) : (
+          <div className='post-content padding-top'>
+              {post.content}
+          </div>
+        )}
         <div className='post-meta'>
             <p className='post-date'>{post.createdAt}</p>
             <p className='post-username'>- {post.username}</p>

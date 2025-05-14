@@ -68,8 +68,22 @@
   max-width: var(--max-width);
 }
 
+.post-header {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.post-header p {
+  font-size: 0.8em;
+}
+
+.post-header:hover {
+  cursor: pointer;
+}
+
 .post-content {
-  padding-top: 30px;
   padding-bottom: 10px;
   width: 100%;
   box-sizing: border-box;
@@ -79,6 +93,10 @@
   overflow-wrap: break-word;
   max-height: 250px;
   overflow-y: auto;
+}
+
+.padding-top {
+  padding-top: 15px;
 }
 
 .post-meta {

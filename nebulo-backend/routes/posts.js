@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const Post = require('../models/Post');
+const mongoose = require('mongoose');
 const { authMiddleware, requireRole } = require('../middleware/authMiddleware');
 
 router.post('/newPost', authMiddleware, requireRole(['user', 'admin']), async (req, res) => {
@@ -47,6 +48,33 @@ router.get('/posts', authMiddleware, requireRole(['user', 'admin']), async (req,
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to fetch posts' });
+  }
+});
+
+router.delete('/deletePost/:postId', authMiddleware, requireRole(['user', 'admin']), async (req, res) => {
+  const { postId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(postId)) {
+    return res.status(400).json({ message: 'Invalid post ID' });
+  }
+
+  try {
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    if (req.user.role !== 'admin' && post.userId.toString() !== req.user.userId) {
+      return res.status(403).json({ message: 'Unauthorized to delete this post' });
+    }
+
+    await Post.findByIdAndDelete(postId);
+    res.status(200).json({ message: 'Post deleted successfully' });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error while deleting post' });
   }
 });
 
