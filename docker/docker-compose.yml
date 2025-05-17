@@ -1,0 +1,56 @@
+services:
+  nginx-server:
+    build:
+      context: ..
+      dockerfile: local/front/Dockerfile
+#    ports:
+#      - "8080:8080"
+#    volumes:
+#      - ~/certs:/etc/ssl
+    expose:
+      - "8080"
+    restart: always
+
+  mongo:
+    image: mongo
+    restart: always
+    expose:
+      - "27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: # Set your db password here
+      MONGO_INITDB_DATABASE: # Set your db name here
+  node-backend:
+    build:
+      context: ..
+      dockerfile: local/back/Dockerfile
+    ports:
+      - "5000:5000"
+    expose:
+      - "5000"
+    restart: always
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: # Set your db password here
+      ME_CONFIG_MONGODB_URL: mongodb://root:<# Set your db password here>@mongo:27017/<#db name here>?authSource=admin
+      ME_CONFIG_BASICAUTH: false
+      JWT_SECRET: # Set your JWT secret here
+    depends_on:
+      - mongo
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cf-tunnel
+    restart: unless-stopped
+    command: tunnel --config /etc/cloudflared/config.yml run
+    environment:
+      - TUNNEL_ORIGIN_CERT=/etc/cloudflared/cert.pem
+    volumes:
+      - ./config.yml:/etc/cloudflared/config.yml
+      - ./<tunnel-name>.json:/etc/cloudflared/<tunnel-name>.json
+      - /home/<user>/.cloudflared/cert.pem:/etc/cloudflared/cert.pem
+
+volumes:
+  mongodb_data:

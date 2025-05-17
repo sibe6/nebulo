@@ -1,0 +1,7 @@
+tunnel: <tunnel-name>
+credentials-file: /etc/cloudflared/<tunnel-name.json
+
+ingress:
+  - hostname: <your-domain>
+    service: http://nginx-server:8080
+  - service: http_status:404
